@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Factory Energy Meter — Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Factory Energy Meter</div>
+    <div class="status">Last update: <span id="lastUpdate">—</span></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav>
+        <a class="active">Overview</a>
+        <a>Meters</a>
+        <a>History</a>
+        <a>Settings</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <section class="kpis">
+        <div class="card"><div class="label">Total Energy (kWh)</div><div class="value" id="kwh">0</div><div class="sub" id="kwhDelta">+0%</div></div>
+        <div class="card"><div class="label">Current Power (kW)</div><div class="value" id="power">0</div><div class="sub" id="powerDelta">—</div></div>
+        <div class="card"><div class="label">Voltage (V)</div><div class="value" id="voltage">0</div><div class="sub" id="voltageDelta">—</div></div>
+        <div class="card"><div class="label">Current (A)</div><div class="value" id="current">0</div><div class="sub" id="currentDelta">—</div></div>
+      </section>
+      <section class="charts">
+        <div class="panel"><h3>Power (kW) — last 24 readings</h3><canvas id="powerChart"></canvas></div>
+        <div class="panel"><h3>Energy by Line (kWh)</h3><canvas id="barChart"></canvas></div>
+      </section>
+    </main>
+  </div>
+  <footer class="footer">© <span id="year"></span> Factory Dashboard</footer>
+  <script src="script.js"></script>
+</body>
+</html>
