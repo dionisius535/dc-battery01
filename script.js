@@ -1,22 +1,26 @@
-const API_URL = "https://dcbattery-power01.dionisius535.workers.dev";
+async function fetchData() {
+  const res = await fetch("https://dcbattery-power01.dionisius535.workers.dev/");
+  const data = await res.json();
 
-async function updateDashboard() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
+  // update text UI
+  document.getElementById("voltage").innerText = data.voltage;
+  document.getElementById("current").innerText = data.current;
+  document.getElementById("power").innerText = data.power;
+  document.getElementById("energy").innerText = data.energy;
+  document.getElementById("frequency").innerText = data.frequency;
 
-    document.getElementById("voltage").innerText = data.voltage ?? 0;
-    document.getElementById("current").innerText = data.current ?? 0;
-    document.getElementById("power").innerText = data.power ?? 0;
-    document.getElementById("kwh").innerText = data.energy ?? 0;
+  // SIMPLE chart fallback (single point)
+  chart.data.labels.push(new Date().toLocaleTimeString());
 
-    document.getElementById("lastUpdate").innerText =
-      new Date().toLocaleTimeString();
+  chart.data.datasets[0].data.push(data.voltage);
+  chart.data.datasets[1].data.push(data.current);
+  chart.data.datasets[2].data.push(data.power);
 
-  } catch (err) {
-    console.log("Dashboard error:", err);
+  // limit memory (important)
+  if (chart.data.labels.length > 20) {
+    chart.data.labels.shift();
+    chart.data.datasets.forEach(d => d.data.shift());
   }
-}
 
-setInterval(updateDashboard, 2000);
-updateDashboard();
+  chart.update();
+}
