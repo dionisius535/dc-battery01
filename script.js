@@ -1,19 +1,22 @@
 const API_URL = "https://dcbattery-power01.dionisius535.workers.dev";
 
-async function fetchData() {
+async function updateDashboard() {
   try {
     const res = await fetch(API_URL);
     const data = await res.json();
 
-    document.getElementById("voltage").innerText = data.voltage + " V";
-    document.getElementById("current").innerText = data.current + " A";
-    document.getElementById("power").innerText = data.power + " W";
-    document.getElementById("energy").innerText = data.energy + " kWh";
+    document.getElementById("voltage").innerText = data.voltage ?? 0;
+    document.getElementById("current").innerText = data.current ?? 0;
+    document.getElementById("power").innerText = data.power ?? 0;
+    document.getElementById("kwh").innerText = data.energy ?? 0;
+
+    document.getElementById("lastUpdate").innerText =
+      new Date().toLocaleTimeString();
 
   } catch (err) {
-    console.log("Fetch error:", err);
+    console.log("Dashboard error:", err);
   }
 }
 
-setInterval(fetchData, 2000);
-fetchData();
+setInterval(updateDashboard, 2000);
+updateDashboard();
