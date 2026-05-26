@@ -1,23 +1,24 @@
 const API_URL =
   "https://dcbattery-power01.dionisius535.workers.dev/";
 
-// =======================
+// =========================
 // POWER CHART
-// =======================
+// =========================
 
-const powerCtx =
-  document.getElementById("powerChart").getContext("2d");
+const powerCtx = document
+  .getElementById("powerChart")
+  .getContext("2d");
 
 const powerChart = new Chart(powerCtx, {
   type: "line",
 
   data: {
     labels: [],
-
     datasets: [
       {
         label: "Power (W)",
         data: [],
+        borderWidth: 2,
         tension: 0.3
       }
     ]
@@ -25,23 +26,17 @@ const powerChart = new Chart(powerCtx, {
 
   options: {
     responsive: true,
-
-    animation: false,
-
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
+    animation: false
   }
 });
 
-// =======================
+// =========================
 // MULTI CHART
-// =======================
+// =========================
 
-const multiCtx =
-  document.getElementById("multiChart").getContext("2d");
+const multiCtx = document
+  .getElementById("multiChart")
+  .getContext("2d");
 
 const multiChart = new Chart(multiCtx, {
   type: "line",
@@ -53,12 +48,14 @@ const multiChart = new Chart(multiCtx, {
       {
         label: "Voltage (V)",
         data: [],
+        borderWidth: 2,
         tension: 0.3
       },
 
       {
         label: "Current (A)",
         data: [],
+        borderWidth: 2,
         tension: 0.3
       }
     ]
@@ -66,109 +63,96 @@ const multiChart = new Chart(multiCtx, {
 
   options: {
     responsive: true,
-
-    animation: false,
-
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
+    animation: false
   }
 });
 
-// =======================
+// =========================
 // FETCH DATA
-// =======================
+// =========================
 
 async function fetchData() {
 
   try {
 
-    const res = await fetch(API_URL);
+    const response = await fetch(API_URL);
 
-    const data = await res.json();
+    const data = await response.json();
 
-    console.log("LIVE DATA:", data);
+    console.log("LIVE:", data);
 
-    // =======================
-    // UPDATE TEXT UI
-    // =======================
+    // =========================
+    // UPDATE UI
+    // =========================
 
     document.getElementById("voltage").innerText =
-      data.voltage != null
-        ? Number(data.voltage).toFixed(2)
-        : "--";
+      Number(data.voltage || 0).toFixed(2);
 
     document.getElementById("current").innerText =
-      data.current != null
-        ? Number(data.current).toFixed(2)
-        : "--";
+      Number(data.current || 0).toFixed(2);
 
     document.getElementById("power").innerText =
-      data.power != null
-        ? Number(data.power).toFixed(2)
-        : "--";
+      Number(data.power || 0).toFixed(2);
 
     document.getElementById("energy").innerText =
-      data.energy != null
-        ? Number(data.energy).toFixed(2)
-        : "--";
+      Number(data.energy || 0).toFixed(2);
 
     document.getElementById("frequency").innerText =
-      data.frequency != null
-        ? Number(data.frequency).toFixed(2)
-        : "--";
+      Number(data.frequency || 0).toFixed(2);
 
-    // =======================
+    // =========================
     // UPDATE TIME
-    // =======================
+    // =========================
 
     const now = new Date().toLocaleTimeString();
 
     document.getElementById("lastUpdate").innerText = now;
 
-    // =======================
-    // UPDATE POWER CHART
-    // =======================
+    // =========================
+    // POWER CHART
+    // =========================
 
     powerChart.data.labels.push(now);
 
-    powerChart.data.datasets[0].data.push(data.power);
+    powerChart.data.datasets[0].data.push(
+      Number(data.power || 0)
+    );
 
-    // =======================
-    // UPDATE MULTI CHART
-    // =======================
+    // =========================
+    // MULTI CHART
+    // =========================
 
     multiChart.data.labels.push(now);
 
-    multiChart.data.datasets[0].data.push(data.voltage);
+    multiChart.data.datasets[0].data.push(
+      Number(data.voltage || 0)
+    );
 
-    multiChart.data.datasets[1].data.push(data.current);
+    multiChart.data.datasets[1].data.push(
+      Number(data.current || 0)
+    );
 
-    // =======================
-    // LIMIT TO LAST 24 POINTS
-    // =======================
+    // =========================
+    // LIMIT GRAPH
+    // =========================
 
-    if (powerChart.data.labels.length > 24) {
+    if (powerChart.data.labels.length > 20) {
 
       powerChart.data.labels.shift();
 
       powerChart.data.datasets[0].data.shift();
     }
 
-    if (multiChart.data.labels.length > 24) {
+    if (multiChart.data.labels.length > 20) {
 
       multiChart.data.labels.shift();
 
-      multiChart.data.datasets.forEach(dataset => {
-        dataset.data.shift();
-      });
+      multiChart.data.datasets.forEach(ds => ds.data.shift());
     }
 
-    // =======================
+    // =========================
     // REFRESH CHARTS
-    // =======================
+    // =========================
 
     powerChart.update();
 
@@ -180,9 +164,9 @@ async function fetchData() {
   }
 }
 
-// =======================
-// AUTO REFRESH
-// =======================
+// =========================
+// START
+// =========================
 
 fetchData();
 
