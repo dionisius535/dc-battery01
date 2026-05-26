@@ -1,5 +1,4 @@
-const API_URL =
-  "https://dcbattery-power01.dionisius535.workers.dev/";
+const API_URL = "https://dcbattery-power01.dionisius535.workers.dev/";
 
 // =========================
 // POWER CHART
