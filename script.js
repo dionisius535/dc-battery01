@@ -4,178 +4,449 @@ const API_URL =
 const HISTORY_URL =
   "https://dcbattery-power01.dionisius535.workers.dev/history";
 
-// =======================================
-// POWER CHART
-// =======================================
+const DEVICE_URL =
+  "https://dcbattery-power01.dionisius535.workers.dev/devices";
 
-const powerCtx =
-  document.getElementById("powerChart")
-    .getContext("2d");
+// =====================================================
+// CHART BUFFERS
+// =====================================================
 
-const powerChart = new Chart(powerCtx, {
+const MAX_POINTS = 60;
 
-  type: "line",
+const labels = [];
 
-  data: {
-    labels: [],
+const voltageDatasets = {};
+const currentDatasets = {};
+const frequencyDatasets = {};
 
-    datasets: [
-      {
-        label: "Power (W)",
+const energyData = [];
+const energyLabels = [];
 
-        data: [],
+// =====================================================
+// POWER DOUGHNUT CHART
+// =====================================================
 
-        borderWidth: 2,
+const powerChart = new Chart(
+  document.getElementById("powerChart"),
+  {
 
-        tension: 0.3
-      }
-    ]
-  },
+    type: "doughnut",
 
-  options: {
-    responsive: true,
+    data: {
 
-    animation: false,
+      labels: ["Used Power", "Remaining"],
 
-    scales: {
-      y: {
-        beginAtZero: true
+      datasets: [
+        {
+          data: [0, 5000]
+        }
+      ]
+    },
+
+    options: {
+
+      responsive: true,
+
+      animation: false,
+
+      cutout: "70%",
+
+      plugins: {
+        legend: {
+          display: false
+        }
       }
     }
   }
-});
+);
 
-// =======================================
-// LOAD HISTORICAL DATA
-// =======================================
+// =====================================================
+// VOLTAGE CHART
+// =====================================================
 
-async function loadHistory() {
+const voltageChart = new Chart(
+  document.getElementById("voltageChart"),
+  {
 
-  try {
+    type: "line",
 
-    const res = await fetch(HISTORY_URL);
+    data: {
+      labels,
+      datasets: []
+    },
 
-    const history = await res.json();
+    options: {
+      responsive: true,
+      animation: false,
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  }
+);
 
-    console.log("HISTORY:", history);
+// =====================================================
+// CURRENT CHART
+// =====================================================
 
-    const labels = history.map(item =>
-      new Date(item.time).toLocaleTimeString()
+const currentChart = new Chart(
+  document.getElementById("currentChart"),
+  {
+
+    type: "line",
+
+    data: {
+      labels,
+      datasets: []
+    },
+
+    options: {
+      responsive: true,
+      animation: false
+    }
+  }
+);
+
+// =====================================================
+// FREQUENCY CHART
+// =====================================================
+
+const frequencyChart = new Chart(
+  document.getElementById("frequencyChart"),
+  {
+
+    type: "line",
+
+    data: {
+      labels,
+      datasets: []
+    },
+
+    options: {
+      responsive: true,
+      animation: false
+    }
+  }
+);
+
+// =====================================================
+// ENERGY BAR CHART
+// =====================================================
+
+const energyChart = new Chart(
+  document.getElementById("energyChart"),
+  {
+
+    type: "bar",
+
+    data: {
+
+      labels: [],
+
+      datasets: [
+        {
+          label: "Energy (kWh)",
+
+          data: []
+        }
+      ]
+    },
+
+    options: {
+
+      responsive: true,
+
+      animation: false,
+
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  }
+);
+
+// =====================================================
+// CREATE DATASET IF NOT EXIST
+// =====================================================
+
+function createDataset(name) {
+
+  return {
+    label: name,
+    data: [],
+    tension: 0.3,
+    borderWidth: 2
+  };
+}
+
+// =====================================================
+// UPDATE MULTILINE CHART
+// =====================================================
+
+function updateLineChart(
+  chart,
+  datasetMap,
+  device,
+  value
+) {
+
+  if (!datasetMap[device]) {
+
+    datasetMap[device] =
+      createDataset(device);
+
+    chart.data.datasets.push(
+      datasetMap[device]
     );
+  }
 
-    const powerData = history.map(item =>
-      item.power
-    );
+  datasetMap[device]
+    .data.push(value);
 
-    powerChart.data.labels = labels;
+  if (
+    datasetMap[device]
+      .data.length > MAX_POINTS
+  ) {
 
-    powerChart.data.datasets[0].data =
-      powerData;
-
-    powerChart.update();
-
-  } catch (err) {
-
-    console.error("HISTORY ERROR:", err);
+    datasetMap[device]
+      .data.shift();
   }
 }
 
-// =======================================
-// FETCH LIVE DATA
-// =======================================
+// =====================================================
+// UPDATE DEVICE TABLE
+// =====================================================
 
-async function fetchData() {
+function updateDeviceTable(devices) {
+
+  const tbody =
+    document.getElementById(
+      "deviceTableBody"
+    );
+
+  tbody.innerHTML = "";
+
+  devices.forEach(device => {
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${device.device}</td>
+      <td>${device.status}</td>
+      <td>${Number(device.voltage || 0).toFixed(2)}</td>
+      <td>${Number(device.current || 0).toFixed(2)}</td>
+      <td>${Number(device.power || 0).toFixed(2)}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
+// =====================================================
+// FETCH REALTIME DATA
+// =====================================================
+
+async function fetchRealtime() {
 
   try {
 
-    const response =
+    const res =
       await fetch(API_URL);
 
     const data =
-      await response.json();
+      await res.json();
 
-    console.log("LIVE:", data);
+    console.log(data);
 
-    // ==========================
-    // UPDATE KPI VALUES
-    // ==========================
+    // ======================================
+    // UPDATE KPI
+    // ======================================
 
-    document.getElementById("voltage")
-      .innerText =
-      Number(data.voltage || 0)
-      .toFixed(2);
+    document.getElementById(
+      "totalPower"
+    ).innerText =
+      Number(
+        data.summary.total_power || 0
+      ).toFixed(2);
 
-    document.getElementById("current")
-      .innerText =
-      Number(data.current || 0)
-      .toFixed(2);
+    document.getElementById(
+      "totalEnergy"
+    ).innerText =
+      Number(
+        data.summary.total_energy || 0
+      ).toFixed(2);
 
-    document.getElementById("power")
-      .innerText =
-      Number(data.power || 0)
-      .toFixed(2);
+    document.getElementById(
+      "totalDevices"
+    ).innerText =
+      data.summary.total_devices;
 
-    document.getElementById("energy")
-      .innerText =
-      Number(data.energy || 0)
-      .toFixed(2);
+    // ======================================
+    // UPDATE POWER DOUGHNUT
+    // ======================================
 
-    document.getElementById("frequency")
-      .innerText =
-      Number(data.frequency || 0)
-      .toFixed(2);
+    const maxPower = 5000;
 
-    // ==========================
-    // LAST UPDATE TIME
-    // ==========================
+    const used =
+      Number(
+        data.summary.total_power || 0
+      );
+
+    const remain =
+      Math.max(
+        maxPower - used,
+        0
+      );
+
+    powerChart.data.datasets[0]
+      .data = [used, remain];
+
+    powerChart.update();
+
+    // ======================================
+    // LABELS
+    // ======================================
 
     const now =
-      new Date().toLocaleTimeString();
+      new Date()
+      .toLocaleTimeString();
+
+    labels.push(now);
+
+    if (labels.length > MAX_POINTS) {
+      labels.shift();
+    }
+
+    // ======================================
+    // DEVICE LOOP
+    // ======================================
+
+    energyChart.data.labels = [];
+    energyChart.data.datasets[0]
+      .data = [];
+
+    data.devices.forEach(device => {
+
+      // VOLTAGE
+
+      updateLineChart(
+        voltageChart,
+        voltageDatasets,
+        device.device,
+        Number(device.voltage || 0)
+      );
+
+      // CURRENT
+
+      updateLineChart(
+        currentChart,
+        currentDatasets,
+        device.device,
+        Number(device.current || 0)
+      );
+
+      // FREQUENCY
+
+      updateLineChart(
+        frequencyChart,
+        frequencyDatasets,
+        device.device,
+        Number(device.frequency || 0)
+      );
+
+      // ENERGY BAR
+
+      energyChart.data.labels.push(
+        device.device
+      );
+
+      energyChart.data.datasets[0]
+        .data.push(
+          Number(device.energy || 0)
+        );
+    });
+
+    // ======================================
+    // UPDATE CHARTS
+    // ======================================
+
+    voltageChart.update();
+
+    currentChart.update();
+
+    frequencyChart.update();
+
+    energyChart.update();
+
+    // ======================================
+    // UPDATE DEVICE TABLE
+    // ======================================
+
+    updateDeviceTable(
+      data.devices
+    );
+
+    // ======================================
+    // LAST UPDATE
+    // ======================================
 
     document.getElementById(
       "lastUpdate"
     ).innerText = now;
 
-    // ==========================
-    // REALTIME CHART UPDATE
-    // ==========================
-
-    powerChart.data.labels.push(now);
-
-    powerChart.data.datasets[0]
-      .data.push(
-        Number(data.power || 0)
-      );
-
-    // Keep last 50 points
-
-    if (
-      powerChart.data.labels.length > 50
-    ) {
-
-      powerChart.data.labels.shift();
-
-      powerChart.data.datasets[0]
-        .data.shift();
-    }
-
-    powerChart.update();
-
   } catch (err) {
 
     console.error(
-      "FETCH ERROR:",
+      "REALTIME ERROR:",
       err
     );
   }
 }
 
-// =======================================
-// START SYSTEM
-// =======================================
+// =====================================================
+// HISTORY GRAPH
+// =====================================================
+
+async function loadHistory() {
+
+  try {
+
+    const res =
+      await fetch(
+        `${HISTORY_URL}?range=-1h&field=power`
+      );
+
+    const history =
+      await res.json();
+
+    console.log(
+      "HISTORY:",
+      history
+    );
+
+  } catch (err) {
+
+    console.error(
+      "HISTORY ERROR:",
+      err
+    );
+  }
+}
+
+// =====================================================
+// START
+// =====================================================
+
+fetchRealtime();
 
 loadHistory();
 
-fetchData();
-
-setInterval(fetchData, 2000);
+setInterval(
+  fetchRealtime,
+  1000
+);
