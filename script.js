@@ -11,7 +11,98 @@ const DEVICE_URL =
 // =====================================================
 
 function showTab(tabId) {
+// =====================================================
+// LOAD ACTIVE DEVICES
+// =====================================================
 
+async function loadDevices() {
+
+  try {
+
+    const res =
+      await fetch(API_URL);
+
+    const data =
+      await res.json();
+
+    const select =
+      document.getElementById(
+        "deviceSelect"
+      );
+
+    // RESET
+    select.innerHTML = `
+      <option value="all">
+        All Devices
+      </option>
+    `;
+
+    // ACTIVE DEVICES ONLY
+    data.devices.forEach(device => {
+
+      if (
+        device.status === "online"
+      ) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          device.device;
+
+        option.innerText =
+          device.device;
+
+        select.appendChild(
+          option
+        );
+      }
+    });
+
+  } catch (err) {
+
+    console.error(
+      "DEVICE LOAD ERROR:",
+      err
+    );
+  }
+}
+  // =====================================================
+// CUSTOM RANGE TOGGLE
+// =====================================================
+
+document
+  .getElementById(
+    "rangeSelect"
+  )
+  .addEventListener(
+    "change",
+    function () {
+
+      const isCustom =
+        this.value === "custom";
+
+      document
+        .getElementById(
+          "startTime"
+        )
+        .style.display =
+          isCustom
+            ? "block"
+            : "none";
+
+      document
+        .getElementById(
+          "endTime"
+        )
+        .style.display =
+          isCustom
+            ? "block"
+            : "none";
+    }
+  );
   // REMOVE ACTIVE
   document
     .querySelectorAll(".tab-content")
@@ -489,25 +580,152 @@ while (
 }
 
 // =====================================================
-// HISTORY GRAPH
+// LOAD HISTORY
 // =====================================================
 
 async function loadHistory() {
 
   try {
 
+    const range =
+      document.getElementById(
+        "rangeSelect"
+      ).value;
+
+    const field =
+      document.getElementById(
+        "fieldSelect"
+      ).value;
+
+    const device =
+      document.getElementById(
+        "deviceSelect"
+      ).value;
+
+    let url =
+      `${HISTORY_URL}?field=${field}`;
+
+    // =========================================
+    // RANGE
+    // =========================================
+
+    if (range !== "custom") {
+
+      url += `&range=${range}`;
+    }
+
+    // =========================================
+    // CUSTOM DATE
+    // =========================================
+
+    if (range === "custom") {
+
+      const start =
+        document.getElementById(
+          "startTime"
+        ).value;
+
+      const end =
+        document.getElementById(
+          "endTime"
+        ).value;
+
+      if (start && end) {
+
+        url +=
+          `&start=${start}`;
+
+        url +=
+          `&end=${end}`;
+      }
+    }
+
+    // =========================================
+    // DEVICE
+    // =========================================
+
+    if (device !== "all") {
+
+      url +=
+        `&device=${device}`;
+    }
+
     const res =
-      await fetch(
-        `${HISTORY_URL}?range=-1h&field=power`
-      );
+      await fetch(url);
 
     const history =
       await res.json();
 
-    console.log(
-      "HISTORY:",
-      history
-    );
+    console.log(history);
+
+    // =========================================
+    // GRAPH
+    // =========================================
+
+    const labels = [];
+
+    const values = [];
+
+    history.forEach(item => {
+
+      labels.push(
+        new Date(
+          item.time
+        ).toLocaleString()
+      );
+
+      values.push(item.value);
+    });
+
+    historyChart.data.labels =
+      labels;
+
+    historyChart.data.datasets[0]
+      .label = field;
+
+    historyChart.data.datasets[0]
+      .data = values;
+
+    historyChart.update();
+
+    // =========================================
+    // TABLE
+    // =========================================
+
+    const tbody =
+      document.getElementById(
+        "historyTableBody"
+      );
+
+    tbody.innerHTML = "";
+
+    history.forEach(item => {
+
+      const row =
+        document.createElement("tr");
+
+      row.innerHTML = `
+        <td>
+          ${new Date(item.time)
+            .toLocaleString()}
+        </td>
+
+        <td>
+          ${item.device}
+        </td>
+
+        <td>
+          ${item.field}
+        </td>
+
+        <td>
+          ${Number(item.value)
+            .toFixed(2)}
+        </td>
+      `;
+
+      tbody.appendChild(row);
+    });
 
   } catch (err) {
 
@@ -517,6 +735,51 @@ async function loadHistory() {
     );
   }
 }
+
+// =====================================================
+// HISTORY CHART
+// =====================================================
+
+const historyChart = new Chart(
+  document.getElementById("historyChart"),
+  {
+
+    type: "line",
+
+    data: {
+
+      labels: [],
+
+      datasets: [
+        {
+          label: "History",
+
+          data: [],
+
+          tension: 0.3,
+
+          borderWidth: 2
+        }
+      ]
+    },
+
+    options: {
+
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      animation: false,
+
+      scales: {
+
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  }
+);
 
 // =====================================================
 // START
@@ -697,7 +960,9 @@ labels.sort((a, b) => {
     );
   }
 }
+
 preloadRealtimeHistory();
+loadDevices();
 fetchRealtime();
 loadHistory();
 
