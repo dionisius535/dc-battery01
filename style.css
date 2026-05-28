@@ -460,7 +460,13 @@ td {
 
 .panel {
 
-  min-height: 200px;
+  height: 320px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  flex-direction: column;
 }
 /* ===================================================== */
 /* ENERGY CHART */
@@ -500,4 +506,44 @@ td {
   font-weight: bold;
 
   color: white;
+}
+/* ===================================================== */
+/* FORCE EQUAL CHART SIZE */
+/* ===================================================== */
+
+.panel canvas {
+
+  flex: 1 !important;
+
+  width: 100% !important;
+
+  height: 100% !important;
+
+  max-height: 220px !important;
+}
+
+/* ===================================================== */
+/* FIX DOUGHNUT */
+/* ===================================================== */
+
+.gauge-container {
+
+  flex: 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+#powerChart {
+
+  width: 180px !important;
+
+  height: 180px !important;
+
+  max-width: 180px !important;
+
+  max-height: 180px !important;
 }
