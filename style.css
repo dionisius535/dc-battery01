@@ -547,3 +547,122 @@ td {
 
   max-height: 250px !important;
 }
+/* ===================================================== */
+/* HISTORY TAB LAYOUT */
+/* ===================================================== */
+
+#historyTab {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+
+  width: 100%;
+}
+
+/* ===================================================== */
+/* HISTORY FILTERS */
+/* ===================================================== */
+
+.history-filters {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  align-items: center;
+}
+
+.history-filters select,
+.history-filters input,
+.history-filters button {
+
+  padding: 10px 14px;
+
+  border-radius: 8px;
+
+  border: 1px solid #334155;
+
+  background: #0f172a;
+
+  color: white;
+}
+
+/* ===================================================== */
+/* HISTORY GRAPH */
+/* ===================================================== */
+
+.history-panel {
+
+  height: 520px !important;
+
+  min-height: 520px !important;
+
+  width: 100%;
+
+  padding: 20px;
+}
+
+/* ===================================================== */
+/* HISTORY TABLE */
+/* ===================================================== */
+
+.history-table-panel {
+
+  height: auto !important;
+
+  min-height: 400px !important;
+
+  overflow: auto;
+
+  padding: 20px;
+}
+
+/* ===================================================== */
+/* HISTORY TABLE STYLE */
+/* ===================================================== */
+
+.history-table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+
+  padding: 12px;
+
+  border-bottom: 1px solid #1e293b;
+
+  text-align: left;
+}
+
+.history-table th {
+
+  background: #111827;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 2;
+}
+
+/* ===================================================== */
+/* HISTORY CHART */
+/* ===================================================== */
+
+#historyChart {
+
+  width: 100% !important;
+
+  height: 100% !important;
+
+  max-height: 480px !important;
+}
