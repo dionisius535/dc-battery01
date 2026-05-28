@@ -6,104 +6,47 @@ const HISTORY_URL =
 
 const DEVICE_URL =
   "https://dcbattery-power01.dionisius535.workers.dev/devices";
+
+// =====================================================
+// GLOBALS
+// =====================================================
+
+const MAX_POINTS = 30;
+
+let labels = [];
+
+// =====================================================
+// DATASETS
+// =====================================================
+
+const voltageDatasets = {};
+const currentDatasets = {};
+const frequencyDatasets = {};
+
+// =====================================================
+// CREATE DATASET
+// =====================================================
+
+function createDataset(label) {
+
+  return {
+
+    label,
+
+    data: [],
+
+    tension: 0.3,
+
+    borderWidth: 2
+  };
+}
+
 // =====================================================
 // TAB SWITCHING
 // =====================================================
 
 function showTab(tabId) {
-// =====================================================
-// LOAD ACTIVE DEVICES
-// =====================================================
 
-async function loadDevices() {
-
-  try {
-
-    const res =
-      await fetch(API_URL);
-
-    const data =
-      await res.json();
-
-    const select =
-      document.getElementById(
-        "deviceSelect"
-      );
-
-    // RESET
-    select.innerHTML = `
-      <option value="all">
-        All Devices
-      </option>
-    `;
-
-    // ACTIVE DEVICES ONLY
-    data.devices.forEach(device => {
-
-      if (
-        device.status === "online"
-      ) {
-
-        const option =
-          document.createElement(
-            "option"
-          );
-
-        option.value =
-          device.device;
-
-        option.innerText =
-          device.device;
-
-        select.appendChild(
-          option
-        );
-      }
-    });
-
-  } catch (err) {
-
-    console.error(
-      "DEVICE LOAD ERROR:",
-      err
-    );
-  }
-}
-  // =====================================================
-// CUSTOM RANGE TOGGLE
-// =====================================================
-
-document
-  .getElementById(
-    "rangeSelect"
-  )
-  .addEventListener(
-    "change",
-    function () {
-
-      const isCustom =
-        this.value === "custom";
-
-      document
-        .getElementById(
-          "startTime"
-        )
-        .style.display =
-          isCustom
-            ? "block"
-            : "none";
-
-      document
-        .getElementById(
-          "endTime"
-        )
-        .style.display =
-          isCustom
-            ? "block"
-            : "none";
-    }
-  );
-  // REMOVE ACTIVE
   document
     .querySelectorAll(".tab-content")
     .forEach(tab => {
@@ -113,12 +56,10 @@ document
       );
     });
 
-  // SHOW SELECTED TAB
   document
     .getElementById(tabId)
     .classList.add("active");
 
-  // BUTTON ACTIVE STATE
   document
     .querySelectorAll(".tab-btn")
     .forEach(btn => {
@@ -128,40 +69,67 @@ document
       );
     });
 
-  // FIND BUTTON
-  const buttons =
-    document.querySelectorAll(
-      ".tab-btn"
-    );
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn => {
 
-  buttons.forEach(btn => {
+      if (
+        btn.getAttribute("onclick")
+          .includes(tabId)
+      ) {
 
-    if (
-      btn.getAttribute("onclick")
-      ?.includes(tabId)
-    ) {
+        btn.classList.add(
+          "active"
+        );
+      }
+    });
+}
 
-      btn.classList.add(
-        "active"
-      );
+window.showTab = showTab;
+
+// =====================================================
+// CHART FACTORY
+// =====================================================
+
+function createLineChart(canvasId) {
+
+  return new Chart(
+    document.getElementById(canvasId),
+    {
+
+      type: "line",
+
+      data: {
+
+        labels,
+
+        datasets: []
+      },
+
+      options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        animation: false
+      }
     }
-  });
+  );
 }
 
 // =====================================================
-// CHART BUFFERS
+// CHARTS
 // =====================================================
 
-const MAX_POINTS = 30; //BUAT GANTI RANGE DI GRAPHIC 
+const voltageChart =
+  createLineChart("voltageChart");
 
-let labels = [];
+const currentChart =
+  createLineChart("currentChart");
 
-const voltageDatasets = {};
-const currentDatasets = {};
-const frequencyDatasets = {};
-
-const energyData = [];
-const energyLabels = [];
+const frequencyChart =
+  createLineChart("frequencyChart");
 
 // =====================================================
 // POWER GAUGE
@@ -179,9 +147,7 @@ const powerChart = new Chart(
 
       datasets: [
         {
-          data: [],
-
-          borderWidth: 2
+          data: []
         }
       ]
     },
@@ -192,98 +158,15 @@ const powerChart = new Chart(
 
       maintainAspectRatio: false,
 
-      animation: false,
-
       cutout: "75%",
 
-      plugins: {
-
-        legend: {
-
-          position: "bottom",
-
-          labels: {
-            color: "white"
-          }
-        }
-      }
-    }
-  }
-);
-
-// =====================================================
-// VOLTAGE CHART
-// =====================================================
-
-const voltageChart = new Chart(
-  document.getElementById("voltageChart"),
-  {
-
-    type: "line",
-
-    data: {
-      labels,
-      datasets: []
-    },
-
-    options: {
-      responsive: true,
-      animation: false,
-      scales: {
-        y: {
-          beginAtZero: false
-        }
-      }
-    }
-  }
-);
-
-// =====================================================
-// CURRENT CHART
-// =====================================================
-
-const currentChart = new Chart(
-  document.getElementById("currentChart"),
-  {
-
-    type: "line",
-
-    data: {
-      labels,
-      datasets: []
-    },
-
-    options: {
-      responsive: true,
       animation: false
     }
   }
 );
 
 // =====================================================
-// FREQUENCY CHART
-// =====================================================
-
-const frequencyChart = new Chart(
-  document.getElementById("frequencyChart"),
-  {
-
-    type: "line",
-
-    data: {
-      labels,
-      datasets: []
-    },
-
-    options: {
-      responsive: true,
-      animation: false
-    }
-  }
-);
-
-// =====================================================
-// ENERGY BAR CHART
+// ENERGY CHART
 // =====================================================
 
 const energyChart = new Chart(
@@ -298,7 +181,7 @@ const energyChart = new Chart(
 
       datasets: [
         {
-          label: "Energy (kWh)",
+          label: "Energy",
 
           data: []
         }
@@ -309,33 +192,51 @@ const energyChart = new Chart(
 
       responsive: true,
 
-      animation: false,
+      maintainAspectRatio: false,
 
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
+      animation: false
     }
   }
 );
 
 // =====================================================
-// CREATE DATASET IF NOT EXIST
+// HISTORY CHART
 // =====================================================
 
-function createDataset(name) {
+const historyChart = new Chart(
+  document.getElementById("historyChart"),
+  {
 
-  return {
-    label: name,
-    data: [],
-    tension: 0.3,
-    borderWidth: 2
-  };
-}
+    type: "line",
+
+    data: {
+
+      labels: [],
+
+      datasets: [
+        {
+          label: "History",
+
+          data: [],
+
+          tension: 0.3
+        }
+      ]
+    },
+
+    options: {
+
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      animation: false
+    }
+  }
+);
 
 // =====================================================
-// UPDATE MULTILINE CHART
+// UPDATE LINE CHART
 // =====================================================
 
 function updateLineChart(
@@ -344,6 +245,8 @@ function updateLineChart(
   device,
   value
 ) {
+
+  device = device.trim();
 
   if (!datasetMap[device]) {
 
@@ -366,40 +269,93 @@ function updateLineChart(
     datasetMap[device]
       .data.shift();
   }
+
+  chart.update();
 }
 
 // =====================================================
-// UPDATE DEVICE TABLE
+// PRELOAD HISTORY
 // =====================================================
 
-function updateDeviceTable(devices) {
+async function preloadRealtimeHistory() {
 
-  const tbody =
-    document.getElementById(
-      "deviceTableBody"
+  try {
+
+    const fields = [
+      "voltage",
+      "current",
+      "frequency"
+    ];
+
+    for (const field of fields) {
+
+      const res =
+        await fetch(
+          `${HISTORY_URL}?range=-30s&field=${field}`
+        );
+
+      const history =
+        await res.json();
+
+      history.forEach(item => {
+
+        const device =
+          item.device.trim();
+
+        const time =
+          new Date(item.time)
+          .toLocaleTimeString();
+
+        if (
+          !labels.includes(time)
+        ) {
+
+          labels.push(time);
+        }
+
+        if (field === "voltage") {
+
+          updateLineChart(
+            voltageChart,
+            voltageDatasets,
+            device,
+            item.value
+          );
+        }
+
+        if (field === "current") {
+
+          updateLineChart(
+            currentChart,
+            currentDatasets,
+            device,
+            item.value
+          );
+        }
+
+        if (field === "frequency") {
+
+          updateLineChart(
+            frequencyChart,
+            frequencyDatasets,
+            device,
+            item.value
+          );
+        }
+      });
+    }
+
+  } catch (err) {
+
+    console.error(
+      "PRELOAD ERROR:",
+      err
     );
-
-  tbody.innerHTML = "";
-
-  devices.forEach(device => {
-
-    const row =
-      document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${device.device}</td>
-      <td>${device.status}</td>
-      <td>${Number(device.voltage || 0).toFixed(2)}</td>
-      <td>${Number(device.current || 0).toFixed(2)}</td>
-      <td>${Number(device.power || 0).toFixed(2)}</td>
-    `;
-
-    tbody.appendChild(row);
-  });
+  }
 }
 
 // =====================================================
-// FETCH REALTIME DATA
+// FETCH REALTIME
 // =====================================================
 
 async function fetchRealtime() {
@@ -412,172 +368,233 @@ async function fetchRealtime() {
     const data =
       await res.json();
 
-    console.log(data);
-// ======================================
-// POWER GAUGE
-// ======================================
-
-const powerLabels = [];
-
-const powerValues = [];
-
-data.devices.forEach(device => {
-
-  powerLabels.push(
-    device.device
-  );
-
-  powerValues.push(
-    Number(device.power || 0)
-  );
-});
-
-powerChart.data.labels =
-  powerLabels;
-
-powerChart.data.datasets[0]
-  .data = powerValues;
-
-powerChart.update();
-
-// CENTER VALUE
-
-document.getElementById(
-  "gaugePowerValue"
-).innerText =
-  Number(
-    data.summary.total_power || 0
-  ).toFixed(2);
-    // ======================================
-    // UPDATE KPI
-    // ======================================
-
     document.getElementById(
-      "totalPower"
+      "lastUpdate"
     ).innerText =
-      Number(
-        data.summary.total_power || 0
-      ).toFixed(2);
-
-    document.getElementById(
-      "totalEnergy"
-    ).innerText =
-      Number(
-        data.summary.total_energy || 0
-      ).toFixed(2);
-
-    document.getElementById(
-      "totalDevices"
-    ).innerText =
-      data.summary.total_devices;
-
-    // ======================================
-    // LABELS
-    // ======================================
+      new Date()
+      .toLocaleTimeString();
 
     const now =
       new Date()
       .toLocaleTimeString();
 
     if (
-  !labels.includes(now)
-) {
+      !labels.includes(now)
+    ) {
 
-  labels.push(now);
-}
+      labels.push(now);
+    }
 
-while (
-  labels.length > MAX_POINTS
-) {
+    while (
+      labels.length > MAX_POINTS
+    ) {
 
-  labels.shift();
-}
+      labels.shift();
+    }
 
-    // ======================================
-    // DEVICE LOOP
-    // ======================================
+    // =========================================
+    // TABLE
+    // =========================================
 
-    energyChart.data.labels = [];
-    energyChart.data.datasets[0]
-      .data = [];
+    const tbody =
+      document.getElementById(
+        "deviceTableBody"
+      );
+
+    tbody.innerHTML = "";
+
+    // =========================================
+    // POWER
+    // =========================================
+
+    const powerLabels = [];
+
+    const powerValues = [];
+
+    // =========================================
+    // ENERGY
+    // =========================================
+
+    const energyLabels = [];
+
+    const energyValues = [];
 
     data.devices.forEach(device => {
 
-      // VOLTAGE
+      const dev =
+        device.device.trim();
 
+      // TABLE
+      const row =
+        document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${dev}</td>
+        <td>${device.status}</td>
+        <td>${Number(device.voltage || 0).toFixed(2)}</td>
+        <td>${Number(device.current || 0).toFixed(2)}</td>
+        <td>${Number(device.power || 0).toFixed(2)}</td>
+      `;
+
+      tbody.appendChild(row);
+
+      // POWER
+      powerLabels.push(dev);
+
+      powerValues.push(
+        Number(device.power || 0)
+      );
+
+      // ENERGY
+      energyLabels.push(dev);
+
+      energyValues.push(
+        Number(device.energy || 0)
+      );
+
+      // CHARTS
       updateLineChart(
         voltageChart,
         voltageDatasets,
-        device.device,
+        dev,
         Number(device.voltage || 0)
       );
-
-      // CURRENT
 
       updateLineChart(
         currentChart,
         currentDatasets,
-        device.device,
+        dev,
         Number(device.current || 0)
       );
-
-      // FREQUENCY
 
       updateLineChart(
         frequencyChart,
         frequencyDatasets,
-        device.device,
+        dev,
         Number(device.frequency || 0)
       );
-
-      // ENERGY BAR
-
-      energyChart.data.labels.push(
-        device.device
-      );
-
-      energyChart.data.datasets[0]
-        .data.push(
-          Number(device.energy || 0)
-        );
     });
 
-    // ======================================
-    // UPDATE CHARTS
-    // ======================================
+    // POWER
+    powerChart.data.labels =
+      powerLabels;
 
-    voltageChart.update();
+    powerChart.data.datasets[0]
+      .data = powerValues;
 
-    currentChart.update();
-
-    frequencyChart.update();
-
-    energyChart.update();
-
-    // ======================================
-    // UPDATE DEVICE TABLE
-    // ======================================
-
-    updateDeviceTable(
-      data.devices
-    );
-
-    // ======================================
-    // LAST UPDATE
-    // ======================================
+    powerChart.update();
 
     document.getElementById(
-      "lastUpdate"
-    ).innerText = now;
+      "gaugePowerValue"
+    ).innerText =
+      Number(
+        data.summary.total_power || 0
+      ).toFixed(2);
+
+    // ENERGY
+    energyChart.data.labels =
+      energyLabels;
+
+    energyChart.data.datasets[0]
+      .data = energyValues;
+
+    energyChart.update();
 
   } catch (err) {
 
     console.error(
-      "REALTIME ERROR:",
+      "FETCH ERROR:",
       err
     );
   }
 }
+
+// =====================================================
+// LOAD DEVICES
+// =====================================================
+
+async function loadDevices() {
+
+  try {
+
+    const res =
+      await fetch(API_URL);
+
+    const data =
+      await res.json();
+
+    const select =
+      document.getElementById(
+        "deviceSelect"
+      );
+
+    select.innerHTML = `
+      <option value="all">
+        All Devices
+      </option>
+    `;
+
+    data.devices.forEach(device => {
+
+      if (
+        device.status === "online"
+      ) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          device.device;
+
+        option.innerText =
+          device.device;
+
+        select.appendChild(option);
+      }
+    });
+
+  } catch (err) {
+
+    console.error(err);
+  }
+}
+
+// =====================================================
+// CUSTOM RANGE
+// =====================================================
+
+document
+  .getElementById(
+    "rangeSelect"
+  )
+  .addEventListener(
+    "change",
+    function () {
+
+      const custom =
+        this.value === "custom";
+
+      document
+        .getElementById(
+          "startTime"
+        )
+        .style.display =
+          custom
+            ? "block"
+            : "none";
+
+      document
+        .getElementById(
+          "endTime"
+        )
+        .style.display =
+          custom
+            ? "block"
+            : "none";
+    }
+  );
 
 // =====================================================
 // LOAD HISTORY
@@ -605,18 +622,10 @@ async function loadHistory() {
     let url =
       `${HISTORY_URL}?field=${field}`;
 
-    // =========================================
-    // RANGE
-    // =========================================
-
     if (range !== "custom") {
 
       url += `&range=${range}`;
     }
-
-    // =========================================
-    // CUSTOM DATE
-    // =========================================
 
     if (range === "custom") {
 
@@ -630,24 +639,14 @@ async function loadHistory() {
           "endTime"
         ).value;
 
-      if (start && end) {
+      url += `&start=${start}`;
 
-        url +=
-          `&start=${start}`;
-
-        url +=
-          `&end=${end}`;
-      }
+      url += `&end=${end}`;
     }
-
-    // =========================================
-    // DEVICE
-    // =========================================
 
     if (device !== "all") {
 
-      url +=
-        `&device=${device}`;
+      url += `&device=${device}`;
     }
 
     const res =
@@ -656,42 +655,33 @@ async function loadHistory() {
     const history =
       await res.json();
 
-    console.log(history);
-
-    // =========================================
     // GRAPH
-    // =========================================
+    const graphLabels = [];
 
-    const labels = [];
-
-    const values = [];
+    const graphValues = [];
 
     history.forEach(item => {
 
-      labels.push(
-        new Date(
-          item.time
-        ).toLocaleString()
+      graphLabels.push(
+        new Date(item.time)
+        .toLocaleString()
       );
 
-      values.push(item.value);
+      graphValues.push(item.value);
     });
 
     historyChart.data.labels =
-      labels;
+      graphLabels;
 
     historyChart.data.datasets[0]
       .label = field;
 
     historyChart.data.datasets[0]
-      .data = values;
+      .data = graphValues;
 
     historyChart.update();
 
-    // =========================================
     // TABLE
-    // =========================================
-
     const tbody =
       document.getElementById(
         "historyTableBody"
@@ -705,23 +695,10 @@ async function loadHistory() {
         document.createElement("tr");
 
       row.innerHTML = `
-        <td>
-          ${new Date(item.time)
-            .toLocaleString()}
-        </td>
-
-        <td>
-          ${item.device}
-        </td>
-
-        <td>
-          ${item.field}
-        </td>
-
-        <td>
-          ${Number(item.value)
-            .toFixed(2)}
-        </td>
+        <td>${new Date(item.time).toLocaleString()}</td>
+        <td>${item.device}</td>
+        <td>${item.field}</td>
+        <td>${Number(item.value).toFixed(2)}</td>
       `;
 
       tbody.appendChild(row);
@@ -736,54 +713,6 @@ async function loadHistory() {
   }
 }
 
-// =====================================================
-// HISTORY CHART
-// =====================================================
-
-const historyChart = new Chart(
-  document.getElementById("historyChart"),
-  {
-
-    type: "line",
-
-    data: {
-
-      labels: [],
-
-      datasets: [
-        {
-          label: "History",
-
-          data: [],
-
-          tension: 0.3,
-
-          borderWidth: 2
-        }
-      ]
-    },
-
-    options: {
-
-      responsive: true,
-
-      maintainAspectRatio: false,
-
-      animation: false,
-
-      scales: {
-
-        y: {
-          beginAtZero: false
-        }
-      }
-    }
-  }
-);
-
-// =====================================================
-// START
-// =====================================================
 // =====================================================
 // LIVE CLOCK
 // =====================================================
@@ -810,164 +739,20 @@ setInterval(
 );
 
 updateClock();
+
 // =====================================================
-// PRELOAD LAST 1 MINUTE
+// START
 // =====================================================
 
-async function preloadRealtimeHistory() {
-
-  try {
-
-    const res =
-      await fetch(
-        `${HISTORY_URL}?range=-30s&field=voltage`
-      );
-
-    const voltageHistory =
-      await res.json();
-
-    const currentRes =
-      await fetch(
-        `${HISTORY_URL}?range=-30s&field=current`
-      );
-
-    const currentHistory =
-      await currentRes.json();
-
-    const freqRes =
-      await fetch(
-        `${HISTORY_URL}?range=-30s&field=frequency`
-      );
-
-    const freqHistory =
-      await freqRes.json();
-
-    // =========================================
-    // VOLTAGE
-    // =========================================
-
-    voltageHistory.forEach(item => {
-
-      const time =
-        new Date(item.time)
-        .toLocaleTimeString();
-
-      if (!labels.includes(time)) {
-      labels.push(time);
-      }
-
-      if (
-        !voltageDatasets[
-          item.device.trim()
-        ]
-      ) {
-
-        voltageDatasets[
-          item.device.trim()
-        ] = createDataset(
-          item.device.trim()
-        );
-
-        voltageChart.data.datasets.push(
-          voltageDatasets[
-            item.device.trim()
-          ]
-        );
-      }
-
-      voltageDatasets[
-        item.device.trim()
-      ].data.push(item.value);
-    });
-
-    // =========================================
-    // CURRENT
-    // =========================================
-
-    currentHistory.forEach(item => {
-
-      if (
-        !currentDatasets[
-          item.device.trim()
-        ]
-      ) {
-
-        currentDatasets[
-          item.device.trim()
-        ] = createDataset(
-          item.device.trim()
-        );
-
-        currentChart.data.datasets.push(
-          currentDatasets[
-            item.device.trim()
-          ]
-        );
-      }
-
-      currentDatasets[
-        item.device.trim()
-      ].data.push(item.value);
-    });
-
-    // =========================================
-    // FREQUENCY
-    // =========================================
-
-    freqHistory.forEach(item => {
-
-      if (
-        !frequencyDatasets[
-          item.device.trim()
-        ]
-      ) {
-
-        frequencyDatasets[
-          item.device.trim()
-        ] = createDataset(
-          item.device.trim()
-        );
-
-        frequencyChart.data.datasets.push(
-          frequencyDatasets[
-            item.device.trim()
-          ]
-        );
-      }
-
-      frequencyDatasets[
-        item.device.trim()
-      ].data.push(item.value);
-    });
-labels.sort((a, b) => {
-
-  return (
-    new Date(`1970/01/01 ${a}`) -
-    new Date(`1970/01/01 ${b}`)
-  );
-});
-    voltageChart.update();
-
-    currentChart.update();
-
-    frequencyChart.update();
-
-  } catch (err) {
-
-    console.error(
-      "PRELOAD ERROR:",
-      err
-    );
-  }
-}
+loadDevices();
 
 preloadRealtimeHistory();
-loadDevices();
+
 fetchRealtime();
+
 loadHistory();
 
 setInterval(
   fetchRealtime,
   1000
 );
-window.showTab = showTab;
