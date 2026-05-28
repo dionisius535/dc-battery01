@@ -627,13 +627,28 @@ td {
 
 .history-table-panel {
 
-  height: auto !important;
+  height: 420px !important;
 
-  min-height: 400px !important;
+  min-height: 420px !important;
 
-  overflow: auto;
+  overflow: hidden;
 
-  padding: 20px;
+  display: flex;
+
+  flex-direction: column;
+}
+
+/* ===================================================== */
+/* TABLE SCROLL */
+/* ===================================================== */
+
+.history-table-wrapper {
+
+  flex: 1;
+
+  overflow-y: auto;
+
+  overflow-x: auto;
 }
 
 /* ===================================================== */
