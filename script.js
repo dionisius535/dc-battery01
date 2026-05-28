@@ -13,7 +13,7 @@ const DEVICE_URL =
 
 const MAX_POINTS = 60;
 
-const labels = [];
+let labels = [];
 
 const voltageDatasets = {};
 const currentDatasets = {};
@@ -338,11 +338,19 @@ document.getElementById(
       new Date()
       .toLocaleTimeString();
 
-    labels.push(now);
+    if (
+  !labels.includes(now)
+) {
 
-    if (labels.length > MAX_POINTS) {
-      labels.shift();
-    }
+  labels.push(now);
+}
+
+while (
+  labels.length > MAX_POINTS
+) {
+
+  labels.shift();
+}
 
     // ======================================
     // DEVICE LOOP
@@ -531,7 +539,9 @@ async function preloadRealtimeHistory() {
         new Date(item.time)
         .toLocaleTimeString();
 
+      if (!labels.includes(time)) {
       labels.push(time);
+      }
 
       if (
         !voltageDatasets[
@@ -616,7 +626,13 @@ async function preloadRealtimeHistory() {
         item.device
       ].data.push(item.value);
     });
+labels.sort((a, b) => {
 
+  return (
+    new Date(`1970/01/01 ${a}`) -
+    new Date(`1970/01/01 ${b}`)
+  );
+});
     voltageChart.update();
 
     currentChart.update();
