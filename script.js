@@ -463,9 +463,176 @@ async function loadHistory() {
 // =====================================================
 // START
 // =====================================================
+// =====================================================
+// LIVE CLOCK
+// =====================================================
 
+function updateClock() {
+
+  const now =
+    new Date();
+
+  document.getElementById(
+    "liveDate"
+  ).innerText =
+    now.toLocaleDateString();
+
+  document.getElementById(
+    "liveClock"
+  ).innerText =
+    now.toLocaleTimeString();
+}
+
+setInterval(
+  updateClock,
+  1000
+);
+
+updateClock();
+// =====================================================
+// PRELOAD LAST 1 MINUTE
+// =====================================================
+
+async function preloadRealtimeHistory() {
+
+  try {
+
+    const res =
+      await fetch(
+        `${HISTORY_URL}?range=-1m&field=voltage`
+      );
+
+    const voltageHistory =
+      await res.json();
+
+    const currentRes =
+      await fetch(
+        `${HISTORY_URL}?range=-1m&field=current`
+      );
+
+    const currentHistory =
+      await currentRes.json();
+
+    const freqRes =
+      await fetch(
+        `${HISTORY_URL}?range=-1m&field=frequency`
+      );
+
+    const freqHistory =
+      await freqRes.json();
+
+    // =========================================
+    // VOLTAGE
+    // =========================================
+
+    voltageHistory.forEach(item => {
+
+      const time =
+        new Date(item.time)
+        .toLocaleTimeString();
+
+      labels.push(time);
+
+      if (
+        !voltageDatasets[
+          item.device
+        ]
+      ) {
+
+        voltageDatasets[
+          item.device
+        ] = createDataset(
+          item.device
+        );
+
+        voltageChart.data.datasets.push(
+          voltageDatasets[
+            item.device
+          ]
+        );
+      }
+
+      voltageDatasets[
+        item.device
+      ].data.push(item.value);
+    });
+
+    // =========================================
+    // CURRENT
+    // =========================================
+
+    currentHistory.forEach(item => {
+
+      if (
+        !currentDatasets[
+          item.device
+        ]
+      ) {
+
+        currentDatasets[
+          item.device
+        ] = createDataset(
+          item.device
+        );
+
+        currentChart.data.datasets.push(
+          currentDatasets[
+            item.device
+          ]
+        );
+      }
+
+      currentDatasets[
+        item.device
+      ].data.push(item.value);
+    });
+
+    // =========================================
+    // FREQUENCY
+    // =========================================
+
+    freqHistory.forEach(item => {
+
+      if (
+        !frequencyDatasets[
+          item.device
+        ]
+      ) {
+
+        frequencyDatasets[
+          item.device
+        ] = createDataset(
+          item.device
+        );
+
+        frequencyChart.data.datasets.push(
+          frequencyDatasets[
+            item.device
+          ]
+        );
+      }
+
+      frequencyDatasets[
+        item.device
+      ].data.push(item.value);
+    });
+
+    voltageChart.update();
+
+    currentChart.update();
+
+    frequencyChart.update();
+
+  } catch (err) {
+
+    console.error(
+      "PRELOAD ERROR:",
+      err
+    );
+  }
+}
+preloadRealtimeHistory();
 fetchRealtime();
-
 loadHistory();
 
 setInterval(
