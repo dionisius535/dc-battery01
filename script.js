@@ -23,7 +23,7 @@ const energyData = [];
 const energyLabels = [];
 
 // =====================================================
-// POWER DOUGHNUT CHART
+// POWER GAUGE
 // =====================================================
 
 const powerChart = new Chart(
@@ -34,11 +34,13 @@ const powerChart = new Chart(
 
     data: {
 
-      labels: ["Used Power", "Remaining"],
+      labels: [],
 
       datasets: [
         {
-          data: [0, 5000]
+          data: [],
+
+          borderWidth: 2
         }
       ]
     },
@@ -47,13 +49,21 @@ const powerChart = new Chart(
 
       responsive: true,
 
+      maintainAspectRatio: false,
+
       animation: false,
 
-      cutout: "70%",
+      cutout: "75%",
 
       plugins: {
+
         legend: {
-          display: false
+
+          position: "bottom",
+
+          labels: {
+            color: "white"
+          }
         }
       }
     }
