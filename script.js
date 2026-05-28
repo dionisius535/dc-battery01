@@ -297,28 +297,6 @@ async function fetchRealtime() {
       data.summary.total_devices;
 
     // ======================================
-    // UPDATE POWER DOUGHNUT
-    // ======================================
-
-    const maxPower = 5000;
-
-    const used =
-      Number(
-        data.summary.total_power || 0
-      );
-
-    const remain =
-      Math.max(
-        maxPower - used,
-        0
-      );
-
-    powerChart.data.datasets[0]
-      .data = [used, remain];
-
-    powerChart.update();
-
-    // ======================================
     // LABELS
     // ======================================
 
