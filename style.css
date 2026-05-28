@@ -539,11 +539,11 @@ td {
 
 #powerChart {
 
-  width: 140px !important;
+  width: 200px !important;
 
-  height: 140px !important;
+  height: 200px !important;
 
-  max-width: 140px !important;
+  max-width: 200px !important;
 
-  max-height: 140px !important;
+  max-height: 200px !important;
 }
