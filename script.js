@@ -217,7 +217,7 @@ function updateLineChart(
   datasetMap[device]
     .data.push(value);
 
-  if (
+  while (
     datasetMap[device]
       .data.length > MAX_POINTS
   ) {
@@ -515,7 +515,7 @@ async function preloadRealtimeHistory() {
 
     const currentRes =
       await fetch(
-        `${HISTORY_URL}?range=-1m&field=current`
+        `${HISTORY_URL}?range=-45s&field=current`
       );
 
     const currentHistory =
@@ -523,7 +523,7 @@ async function preloadRealtimeHistory() {
 
     const freqRes =
       await fetch(
-        `${HISTORY_URL}?range=-1m&field=frequency`
+        `${HISTORY_URL}?range=-45s&field=frequency`
       );
 
     const freqHistory =
