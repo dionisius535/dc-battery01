@@ -162,16 +162,31 @@
           <div class="left-column">
 
             <!-- POWER -->
-            <div class="panel">
+            <div class="panel gauge-panel">
 
-              <h3>
-                Total Power
-              </h3>
+  <h3>
+    Total Power
+  </h3>
 
-              <canvas id="powerChart"></canvas>
+  <div class="gauge-container">
 
-            </div>
+    <canvas id="powerChart"></canvas>
 
+    <div class="gauge-center">
+
+      <div id="gaugePowerValue">
+        0
+      </div>
+
+      <div class="gauge-unit">
+        W
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
             <!-- VOLTAGE -->
             <div class="panel">
 
