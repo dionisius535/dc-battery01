@@ -220,7 +220,8 @@ body {
 
   display: grid;
 
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:
+    repeat(3, 1fr);
 
   gap: 20px;
 }
@@ -228,11 +229,7 @@ body {
 .left-column,
 .right-column {
 
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 20px;
+  display: contents;
 }
 
 /* ===================================================== */
@@ -423,9 +420,9 @@ td {
 
 #powerChart {
 
-  max-height: 260px !important;
+  max-height: 180px !important;
 
-  max-width: 260px !important;
+  max-width: 180px !important;
 }
 
 .gauge-center {
@@ -463,5 +460,44 @@ td {
 
 .panel {
 
-  min-height: 420px;
+  min-height: 320px;
+}
+/* ===================================================== */
+/* ENERGY CHART */
+/* ===================================================== */
+
+#energyChart {
+
+  max-height: 180px !important;
+}
+
+/* ===================================================== */
+/* DATE TIME */
+/* ===================================================== */
+
+.datetime-box {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  margin-right: 12px;
+}
+
+#liveDate {
+
+  font-size: 13px;
+
+  color: #cbd5e1;
+}
+
+#liveClock {
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  color: white;
 }
