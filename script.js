@@ -272,7 +272,41 @@ async function fetchRealtime() {
       await res.json();
 
     console.log(data);
+// ======================================
+// POWER GAUGE
+// ======================================
 
+const powerLabels = [];
+
+const powerValues = [];
+
+data.devices.forEach(device => {
+
+  powerLabels.push(
+    device.device
+  );
+
+  powerValues.push(
+    Number(device.power || 0)
+  );
+});
+
+powerChart.data.labels =
+  powerLabels;
+
+powerChart.data.datasets[0]
+  .data = powerValues;
+
+powerChart.update();
+
+// CENTER VALUE
+
+document.getElementById(
+  "gaugePowerValue"
+).innerText =
+  Number(
+    data.summary.total_power || 0
+  ).toFixed(2);
     // ======================================
     // UPDATE KPI
     // ======================================
