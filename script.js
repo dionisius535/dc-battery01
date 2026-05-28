@@ -11,7 +11,7 @@ const DEVICE_URL =
 // CHART BUFFERS
 // =====================================================
 
-const MAX_POINTS = 60;
+const MAX_POINTS = 30; //BUAT GANTI RANGE DI GRAPHIC 
 
 let labels = [];
 
@@ -507,7 +507,7 @@ async function preloadRealtimeHistory() {
 
     const res =
       await fetch(
-        `${HISTORY_URL}?range=-1m&field=voltage`
+        `${HISTORY_URL}?range=-30s&field=voltage`
       );
 
     const voltageHistory =
@@ -515,7 +515,7 @@ async function preloadRealtimeHistory() {
 
     const currentRes =
       await fetch(
-        `${HISTORY_URL}?range=-45s&field=current`
+        `${HISTORY_URL}?range=-30s&field=current`
       );
 
     const currentHistory =
@@ -523,7 +523,7 @@ async function preloadRealtimeHistory() {
 
     const freqRes =
       await fetch(
-        `${HISTORY_URL}?range=-45s&field=frequency`
+        `${HISTORY_URL}?range=-30s&field=frequency`
       );
 
     const freqHistory =
@@ -545,25 +545,25 @@ async function preloadRealtimeHistory() {
 
       if (
         !voltageDatasets[
-          item.device
+          item.device.trim()
         ]
       ) {
 
         voltageDatasets[
-          item.device
+          item.device.trim()
         ] = createDataset(
-          item.device
+          item.device.trim()
         );
 
         voltageChart.data.datasets.push(
           voltageDatasets[
-            item.device
+            item.device.trim()
           ]
         );
       }
 
       voltageDatasets[
-        item.device
+        item.device.trim()
       ].data.push(item.value);
     });
 
@@ -575,25 +575,25 @@ async function preloadRealtimeHistory() {
 
       if (
         !currentDatasets[
-          item.device
+          item.device.trim()
         ]
       ) {
 
         currentDatasets[
-          item.device
+          item.device.trim()
         ] = createDataset(
-          item.device
+          item.device.trim()
         );
 
         currentChart.data.datasets.push(
           currentDatasets[
-            item.device
+            item.device.trim()
           ]
         );
       }
 
       currentDatasets[
-        item.device
+        item.device.trim()
       ].data.push(item.value);
     });
 
@@ -605,25 +605,25 @@ async function preloadRealtimeHistory() {
 
       if (
         !frequencyDatasets[
-          item.device
+          item.device.trim()
         ]
       ) {
 
         frequencyDatasets[
-          item.device
+          item.device.trim()
         ] = createDataset(
-          item.device
+          item.device.trim()
         );
 
         frequencyChart.data.datasets.push(
           frequencyDatasets[
-            item.device
+            item.device.trim()
           ]
         );
       }
 
       frequencyDatasets[
-        item.device
+        item.device.trim()
       ].data.push(item.value);
     });
 labels.sort((a, b) => {
