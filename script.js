@@ -6,6 +6,56 @@ const HISTORY_URL =
 
 const DEVICE_URL =
   "https://dcbattery-power01.dionisius535.workers.dev/devices";
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+
+function showTab(tabId) {
+
+  // REMOVE ACTIVE
+  document
+    .querySelectorAll(".tab-content")
+    .forEach(tab => {
+
+      tab.classList.remove(
+        "active"
+      );
+    });
+
+  // SHOW SELECTED TAB
+  document
+    .getElementById(tabId)
+    .classList.add("active");
+
+  // BUTTON ACTIVE STATE
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+    });
+
+  // FIND BUTTON
+  const buttons =
+    document.querySelectorAll(
+      ".tab-btn"
+    );
+
+  buttons.forEach(btn => {
+
+    if (
+      btn.getAttribute("onclick")
+      ?.includes(tabId)
+    ) {
+
+      btn.classList.add(
+        "active"
+      );
+    }
+  });
+}
 
 // =====================================================
 // CHART BUFFERS
@@ -655,3 +705,4 @@ setInterval(
   fetchRealtime,
   1000
 );
+window.showTab = showTab;
