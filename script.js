@@ -468,7 +468,28 @@ async function fetchRealtime() {
       Number(
         data.summary.total_power || 0
       ).toFixed(2);
+// KPI
 
+document.getElementById(
+  "totalPower"
+).innerText =
+  Number(
+    data.summary.total_power || 0
+  ).toFixed(2);
+
+document.getElementById(
+  "totalEnergy"
+).innerText =
+  Number(
+    data.summary.total_energy || 0
+  ).toFixed(2);
+
+document.getElementById(
+  "totalDevices"
+).innerText =
+  Number(
+    data.summary.total_devices || 0
+  );
     // ENERGY
 
     energyChart.data.labels =
