@@ -350,14 +350,6 @@ async function preloadRealtimeHistory() {
 // =====================================================
 
 async function fetchRealtime() {
-  document.getElementById("totalPower").innerText =
-  Number(data.summary.total_power || 0).toFixed(2);
-
-document.getElementById("totalEnergy").innerText =
-  Number(data.summary.total_energy || 0).toFixed(2);
-
-document.getElementById("totalDevices").innerText =
-  Number(data.summary.total_devices || 0);
   try {
 
     const res =
