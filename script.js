@@ -693,9 +693,9 @@ updateClock();
 
 loadDevices();
 
-preloadRealtimeHistory();
+await preloadRealtimeHistory();
 
-fetchRealtime();
+await fetchRealtime();
 
 loadHistory();
 
