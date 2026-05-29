@@ -21,7 +21,18 @@ body {
 /* ===================================================== */
 /* TAB SYSTEM */
 /* ===================================================== */
+.main-content {
 
+  flex: 1;
+
+  padding: 24px;
+
+  overflow-y: auto;
+
+  width: 100%;
+
+  min-width: 0;
+}
 .tab-content {
 
   display: none;
@@ -250,6 +261,10 @@ body {
 /* PANELS */
 /* ===================================================== */
 
+.overview-panel {
+
+  height: 320px;
+}
 .panel {
 
   background: #111827;
@@ -259,6 +274,12 @@ body {
   border-radius: 16px;
 
   padding: 20px;
+
+  overflow: hidden;
+
+  display: flex;
+
+  flex-direction: column;
 }
 
 .panel h3 {
@@ -612,13 +633,15 @@ td {
 
 .history-panel {
 
-  height: 520px !important;
+  width: 100% !important;
 
-  min-height: 520px !important;
+  min-width: 100% !important;
 
-  width: 100%;
+  height: 550px !important;
 
-  padding: 20px;
+  flex: none;
+
+  display: block;
 }
 
 /* ===================================================== */
@@ -627,11 +650,13 @@ td {
 
 .history-table-panel {
 
-  height: 420px !important;
+  width: 100% !important;
 
-  min-height: 420px !important;
+  min-width: 100% !important;
 
-  overflow: hidden;
+  height: 450px !important;
+
+  flex: none;
 
   display: flex;
 
@@ -691,7 +716,7 @@ td {
 
   width: 100% !important;
 
-  height: 100% !important;
+  height: 500px !important;
 
-  max-height: 480px !important;
+  max-height: none !important;
 }
