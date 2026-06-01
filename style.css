@@ -381,7 +381,9 @@ td {
 
   grid-template-columns: repeat(3, 1fr);
 
-  gap: 15px;
+  gap: 10px;
+
+  margin-bottom: 10px;
 }
 
 .stat-card {
@@ -390,25 +392,27 @@ td {
 
   border: 1px solid #1f2937;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
-  padding: 16px;
+  padding: 10px 12px;
+
+  min-height: 70px;
 }
 
 .stat-label {
 
   color: #94a3b8;
 
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .stat-value {
 
-  font-size: 28px;
+  font-size: 20px;
 
   font-weight: bold;
 
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .history-filters button {
 
