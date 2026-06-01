@@ -278,8 +278,11 @@ async function preloadRealtimeHistory() {
           `${HISTORY_URL}?range=-30s&field=${field}`
         );
 
-      const history =
-        await res.json();
+      const data =
+  await res.json();
+
+const history =
+  data.history || [];
 
       history.forEach(item => {
 
@@ -631,40 +634,27 @@ if (device !== "all") {
     const history =
       await res.json();
     const values = history
-  .map(x => Number(x.value))
-  .filter(v => !isNaN(v));
-
-if (values.length > 0) {
-
-  const min =
-    Math.min(...values);
-
-  const max =
-    Math.max(...values);
-
-  const avg =
-    values.reduce(
-      (a, b) => a + b,
-      0
-    ) / values.length;
-
   document.getElementById(
-    "historyMin"
-  ).innerText =
-    min.toFixed(2);
+  "historyMin"
+).innerText =
+  Number(
+    data.stats?.min || 0
+  ).toFixed(2);
 
-  document.getElementById(
-    "historyAvg"
-  ).innerText =
-    avg.toFixed(2);
+document.getElementById(
+  "historyAvg"
+).innerText =
+  Number(
+    data.stats?.avg || 0
+  ).toFixed(2);
 
-  document.getElementById(
-    "historyMax"
-  ).innerText =
-    max.toFixed(2);
+document.getElementById(
+  "historyMax"
+).innerText =
+  Number(
+    data.stats?.max || 0
+  ).toFixed(2);
 }
-
-    // CHART
 
     // CHART
 
