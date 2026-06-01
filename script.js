@@ -584,12 +584,37 @@ async function loadHistory() {
     let url =
       `${HISTORY_URL}?field=${field}`;
 
-    if (
-      range !== "custom"
-    ) {
+    if (range === "custom") {
 
-      url += `&range=${range}`;
-    }
+  const start =
+    document.getElementById(
+      "startTime"
+    ).value;
+
+  const end =
+    document.getElementById(
+      "endTime"
+    ).value;
+
+  if (!start || !end) {
+
+    alert(
+      "Select Start and End Time"
+    );
+
+    return;
+  }
+
+  url +=
+    `&start=${encodeURIComponent(start)}`;
+
+  url +=
+    `&end=${encodeURIComponent(end)}`;
+
+} else {
+
+  url += `&range=${range}`;
+}
 
     if (
       device !== "all"
