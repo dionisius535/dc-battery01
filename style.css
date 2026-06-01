@@ -375,7 +375,41 @@ td {
 
   outline: none;
 }
+.history-stats {
 
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 15px;
+}
+
+.stat-card {
+
+  background: #111827;
+
+  border: 1px solid #1f2937;
+
+  border-radius: 12px;
+
+  padding: 16px;
+}
+
+.stat-label {
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.stat-value {
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  margin-top: 8px;
+}
 .history-filters button {
 
   cursor: pointer;
