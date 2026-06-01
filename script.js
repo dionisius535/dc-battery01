@@ -639,13 +639,6 @@ if (device !== "all") {
     data.history || [];
     
     const values = history
-  document.getElementById(
-  "historyMin"
-    
-).innerText =
-  Number(
-    data.stats?.min || 0
-  ).toFixed(2);
 
 document.getElementById(
   "historyAvg"
@@ -653,13 +646,21 @@ document.getElementById(
   Number(
     data.stats?.avg || 0
   ).toFixed(2);
-
 document.getElementById(
-  "historyMax"
+  "historyPeak"
 ).innerText =
   Number(
-    data.stats?.max || 0
+    data.stats?.peakValue || 0
   ).toFixed(2);
+
+document.getElementById(
+  "historyPeakTime"
+).innerText =
+  data.stats?.peakTime
+    ? new Date(
+        data.stats.peakTime
+      ).toLocaleString()
+    : "-";
 
 
     // CHART
