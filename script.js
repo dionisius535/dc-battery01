@@ -582,54 +582,48 @@ async function loadHistory() {
       ).value;
 
     let url =
-      `${HISTORY_URL}?field=${field}`;
-    
-//CUSTOM RANGE
-    
-    if (range === "custom") {
+  `${HISTORY_URL}?field=${field}`;
+
+if (range === "custom") {
 
   const start =
-    new Date(
-      document.getElementById(
-        "startTime"
-      ).value
-    ).toISOString();
+    document.getElementById(
+      "startTime"
+    ).value;
 
   const end =
-    new Date(
-      document.getElementById(
-        "endTime"
-      ).value
-    ).toISOString();
+    document.getElementById(
+      "endTime"
+    ).value;
 
   if (!start || !end) {
 
     alert(
-      "Please select Start and End Date"
+      "Please select Start and End date"
     );
 
     return;
   }
 
   url +=
-    `&start=${encodeURIComponent(start)}`;
+    `&start=${encodeURIComponent(
+      new Date(start).toISOString()
+    )}`;
 
   url +=
-    `&end=${encodeURIComponent(end)}`;
+    `&end=${encodeURIComponent(
+      new Date(end).toISOString()
+    )}`;
 
 } else {
 
   url += `&range=${range}`;
 }
 
-console.log(url);
+if (device !== "all") {
 
-    if (
-      device !== "all"
-    ) {
-
-      url += `&device=${device}`;
-    }
+  url += `&device=${device}`;
+}
 
     const res =
       await fetch(url);
@@ -758,35 +752,22 @@ updateClock();
 // START
 // =====================================================
 document
-  .getElementById(
-    "rangeSelect"
-  )
-  .addEventListener(
-    "change",
-    function () {
+  .getElementById("rangeSelect")
+  .addEventListener("change", function () {
 
-      const custom =
-        this.value === "custom";
+    const custom =
+      this.value === "custom";
 
-      document
-        .getElementById(
-          "startTime"
-        )
-        .style.display =
-          custom
-            ? "block"
-            : "none";
+    document.getElementById(
+      "startTime"
+    ).style.display =
+      custom ? "block" : "none";
 
-      document
-        .getElementById(
-          "endTime"
-        )
-        .style.display =
-          custom
-            ? "block"
-            : "none";
-    }
-  );
+    document.getElementById(
+      "endTime"
+    ).style.display =
+      custom ? "block" : "none";
+});
 loadDevices();
 
 preloadRealtimeHistory();
