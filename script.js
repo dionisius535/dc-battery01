@@ -628,15 +628,20 @@ if (device !== "all") {
 
   url += `&device=${device}`;
 }
-
+// REV01
     const res =
-      await fetch(url);
+    await fetch(url);
+
+    const data =
+    await res.json();
 
     const history =
-      await res.json();
+    data.history || [];
+    
     const values = history
   document.getElementById(
   "historyMin"
+    
 ).innerText =
   Number(
     data.stats?.min || 0
@@ -656,7 +661,7 @@ document.getElementById(
     data.stats?.max || 0
   ).toFixed(2);
 }
-}
+
     // CHART
 
 historyChart.data.labels = [];
