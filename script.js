@@ -603,6 +603,39 @@ async function loadHistory() {
 
     const history =
       await res.json();
+    const values = history
+  .map(x => Number(x.value))
+  .filter(v => !isNaN(v));
+
+if (values.length > 0) {
+
+  const min =
+    Math.min(...values);
+
+  const max =
+    Math.max(...values);
+
+  const avg =
+    values.reduce(
+      (a, b) => a + b,
+      0
+    ) / values.length;
+
+  document.getElementById(
+    "historyMin"
+  ).innerText =
+    min.toFixed(2);
+
+  document.getElementById(
+    "historyAvg"
+  ).innerText =
+    avg.toFixed(2);
+
+  document.getElementById(
+    "historyMax"
+  ).innerText =
+    max.toFixed(2);
+}
 
     // CHART
 
