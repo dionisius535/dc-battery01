@@ -583,23 +583,29 @@ async function loadHistory() {
 
     let url =
       `${HISTORY_URL}?field=${field}`;
-
+    
+//CUSTOM RANGE
+    
     if (range === "custom") {
 
   const start =
-    document.getElementById(
-      "startTime"
-    ).value;
+    new Date(
+      document.getElementById(
+        "startTime"
+      ).value
+    ).toISOString();
 
   const end =
-    document.getElementById(
-      "endTime"
-    ).value;
+    new Date(
+      document.getElementById(
+        "endTime"
+      ).value
+    ).toISOString();
 
   if (!start || !end) {
 
     alert(
-      "Select Start and End Time"
+      "Please select Start and End Date"
     );
 
     return;
@@ -615,6 +621,8 @@ async function loadHistory() {
 
   url += `&range=${range}`;
 }
+
+console.log(url);
 
     if (
       device !== "all"
@@ -744,40 +752,41 @@ setInterval(
 );
 
 updateClock();
-document
-.getElementById(
-  "rangeSelect"
-)
-.addEventListener(
-  "change",
-  function() {
 
-    const custom =
-      this.value === "custom";
-
-    document
-      .getElementById(
-        "startTime"
-      )
-      .style.display =
-        custom
-          ? "block"
-          : "none";
-
-    document
-      .getElementById(
-        "endTime"
-      )
-      .style.display =
-        custom
-          ? "block"
-          : "none";
-  }
 );
 // =====================================================
 // START
 // =====================================================
+document
+  .getElementById(
+    "rangeSelect"
+  )
+  .addEventListener(
+    "change",
+    function () {
 
+      const custom =
+        this.value === "custom";
+
+      document
+        .getElementById(
+          "startTime"
+        )
+        .style.display =
+          custom
+            ? "block"
+            : "none";
+
+      document
+        .getElementById(
+          "endTime"
+        )
+        .style.display =
+          custom
+            ? "block"
+            : "none";
+    }
+  );
 loadDevices();
 
 preloadRealtimeHistory();
