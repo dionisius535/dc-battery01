@@ -666,21 +666,39 @@ if (values.length > 0) {
 
     // CHART
 
-    historyChart.data.labels = [];
+    // CHART
 
-    historyChart.data.datasets[0]
-      .data = [];
+historyChart.data.labels = [];
 
-    history.forEach(item => {
+historyChart.data.datasets[0].data = [];
 
-      historyChart.data.labels.push(
-        new Date(item.time)
-        .toLocaleString()
-      );
+// Limit graph points for large datasets
 
-      historyChart.data.datasets[0]
-        .data.push(item.value);
-    });
+let chartData = history;
+
+if (history.length > 500) {
+
+  const step =
+    Math.ceil(history.length / 500);
+
+  chartData =
+    history.filter(
+      (_, index) =>
+        index % step === 0
+    );
+}
+
+chartData.forEach(item => {
+
+  historyChart.data.labels.push(
+    new Date(item.time)
+      .toLocaleString()
+  );
+
+  historyChart.data.datasets[0]
+    .data.push(item.value);
+
+});
 
     historyChart.data.datasets[0]
       .label = field;
