@@ -587,7 +587,8 @@ async function loadHistory() {
     let url =
   `${HISTORY_URL}?field=${field}`;
 
-if (range === "custom") {
+if (range === "custom") 
+{
 
   const start =
     document.getElementById(
@@ -655,7 +656,7 @@ document.getElementById(
     data.stats?.max || 0
   ).toFixed(2);
 }
-
+}
     // CHART
 
 historyChart.data.labels = [];
