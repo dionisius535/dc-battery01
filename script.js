@@ -793,5 +793,5 @@ loadHistory();
 
 setInterval(
   fetchRealtime,
-  1000
+  3000
 );
