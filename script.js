@@ -660,7 +660,7 @@ document.getElementById(
   Number(
     data.stats?.max || 0
   ).toFixed(2);
-}
+
 
     // CHART
 
