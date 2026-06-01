@@ -744,7 +744,36 @@ setInterval(
 );
 
 updateClock();
+document
+.getElementById(
+  "rangeSelect"
+)
+.addEventListener(
+  "change",
+  function() {
 
+    const custom =
+      this.value === "custom";
+
+    document
+      .getElementById(
+        "startTime"
+      )
+      .style.display =
+        custom
+          ? "block"
+          : "none";
+
+    document
+      .getElementById(
+        "endTime"
+      )
+      .style.display =
+        custom
+          ? "block"
+          : "none";
+  }
+);
 // =====================================================
 // START
 // =====================================================
