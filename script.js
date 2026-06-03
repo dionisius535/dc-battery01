@@ -207,18 +207,29 @@ const frequencyDatasets = {};
 
 function createDataset(label) {
 
-  let color = "#ffffff";
+  let color = "#3b82f6"; // blue
 
-  if (label === "L1") color = "#22c55e"; // green
-  if (label === "L2") color = "#3b82f6"; // blue
-  if (label === "L3") color = "#f59e0b"; // orange
+  if (label === "L1")
+    color = "#3b82f6";
+
+  if (label === "L2")
+    color = "#22c55e";
+
+  if (label === "L3")
+    color = "#f59e0b";
 
   return {
+
     label,
+
     data: [],
+
     tension: 0.3,
+
     borderWidth: 2,
+
     borderColor: color,
+
     backgroundColor: color
   };
 }
@@ -462,10 +473,17 @@ async function fetchRealtime() {
     // POWER
 
     powerChart.data.labels =
-      powerLabels;
+  powerLabels;
 
-    powerChart.data.datasets[0]
-      .data = powerValues;
+powerChart.data.datasets[0]
+  .data = powerValues;
+
+powerChart.data.datasets[0]
+  .backgroundColor = [
+    "#3b82f6",
+    "#22c55e",
+    "#f59e0b"
+  ];
 
     powerChart.update();
 
@@ -671,21 +689,9 @@ document.getElementById(
 
 historyChart.data.labels = [];
 
-const datasets = {};
+historyChart.data.datasets = [];
 
-let chartData = history;
-
-if (history.length > 500) {
-
-  const step =
-    Math.ceil(history.length / 500);
-
-  chartData =
-    history.filter(
-      (_, index) =>
-        index % step === 0
-    );
-}
+const deviceMap = {};
 
 chartData.forEach(item => {
 
@@ -700,25 +706,21 @@ chartData.forEach(item => {
     historyChart.data.labels.push(time);
   }
 
-  const device =
-    item.device;
+  if (
+    !deviceMap[item.device]
+  ) {
 
-  if (!datasets[device]) {
+    let color = "#3b82f6";
 
-    let color = "#ffffff";
-
-    if (device === "L1")
+    if (item.device === "L2")
       color = "#22c55e";
 
-    if (device === "L2")
-      color = "#3b82f6";
-
-    if (device === "L3")
+    if (item.device === "L3")
       color = "#f59e0b";
 
-    datasets[device] = {
+    deviceMap[item.device] = {
 
-      label: device,
+      label: item.device,
 
       data: [],
 
@@ -730,16 +732,12 @@ chartData.forEach(item => {
     };
   }
 
-  datasets[device].data.push({
-    x: time,
-    y: item.value
-  });
-
+  deviceMap[item.device]
+    .data.push(item.value);
 });
 
 historyChart.data.datasets =
-  Object.values(datasets);
-
+  Object.values(deviceMap);
 historyChart.update();
 
     // TABLE
