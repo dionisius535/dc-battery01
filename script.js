@@ -223,8 +223,8 @@ const historyChart =
         maxTicksLimit: 10
       }
     }
-  }
-}
+  };
+
 
 // =====================================================
 // DATASETS
