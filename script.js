@@ -207,15 +207,19 @@ const frequencyDatasets = {};
 
 function createDataset(label) {
 
+  let color = "#ffffff";
+
+  if (label === "L1") color = "#22c55e"; // green
+  if (label === "L2") color = "#3b82f6"; // blue
+  if (label === "L3") color = "#f59e0b"; // orange
+
   return {
-
     label,
-
     data: [],
-
     tension: 0.3,
-
-    borderWidth: 2
+    borderWidth: 2,
+    borderColor: color,
+    backgroundColor: color
   };
 }
 
@@ -667,9 +671,7 @@ document.getElementById(
 
 historyChart.data.labels = [];
 
-historyChart.data.datasets[0].data = [];
-
-// Limit graph points for large datasets
+const datasets = {};
 
 let chartData = history;
 
@@ -687,20 +689,58 @@ if (history.length > 500) {
 
 chartData.forEach(item => {
 
-  historyChart.data.labels.push(
+  const time =
     new Date(item.time)
-      .toLocaleString()
-  );
+      .toLocaleString();
 
-  historyChart.data.datasets[0]
-    .data.push(item.value);
+  if (
+    !historyChart.data.labels.includes(time)
+  ) {
+
+    historyChart.data.labels.push(time);
+  }
+
+  const device =
+    item.device;
+
+  if (!datasets[device]) {
+
+    let color = "#ffffff";
+
+    if (device === "L1")
+      color = "#22c55e";
+
+    if (device === "L2")
+      color = "#3b82f6";
+
+    if (device === "L3")
+      color = "#f59e0b";
+
+    datasets[device] = {
+
+      label: device,
+
+      data: [],
+
+      borderColor: color,
+
+      backgroundColor: color,
+
+      tension: 0.3
+    };
+  }
+
+  datasets[device].data.push({
+    x: time,
+    y: item.value
+  });
 
 });
 
-    historyChart.data.datasets[0]
-      .label = field;
+historyChart.data.datasets =
+  Object.values(datasets);
 
-    historyChart.update();
+historyChart.update();
 
     // TABLE
 
