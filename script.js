@@ -220,11 +220,13 @@ const historyChart =
 
       ticks: {
 
-        maxTicksLimit: 10
+            maxTicksLimit: 10
+            }
+          }
+        }
       }
     }
-  }
-
+  );
 
 // =====================================================
 // DATASETS
