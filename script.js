@@ -188,14 +188,43 @@ const historyChart =
 
       options: {
 
-        responsive: true,
+  responsive: true,
 
-        maintainAspectRatio: false,
+  maintainAspectRatio: false,
 
-        animation: false
+  animation: false,
+
+  interaction: {
+
+    mode: "index",
+
+    intersect: false
+  },
+
+  plugins: {
+
+    tooltip: {
+
+      enabled: true
+    },
+
+    legend: {
+
+      display: true
+    }
+  },
+
+  scales: {
+
+    x: {
+
+      ticks: {
+
+        maxTicksLimit: 10
       }
     }
-  );
+  }
+};
 
 // =====================================================
 // DATASETS
@@ -734,17 +763,21 @@ chartData.forEach(item => {
 
       label: item.device,
 
-  data: [],
-
-  borderColor: color,
-
-  backgroundColor: color,
-
-  tension: 0.3,
-
-  fill: false,
-
-  pointRadius: 0
+      data: [],
+    
+      borderColor: color,
+    
+      backgroundColor: color,
+    
+      tension: 0.3,
+    
+      fill: false,
+    
+      pointRadius: 2,
+    
+      pointHoverRadius: 6,
+    
+      hitRadius: 20
     };
   }
 
