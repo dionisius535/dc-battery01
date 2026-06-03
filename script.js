@@ -686,7 +686,19 @@ document.getElementById(
 
 
     // CHART
+let chartData = history;
 
+if (history.length > 500) {
+
+  const step =
+    Math.ceil(history.length / 500);
+
+  chartData =
+    history.filter(
+      (_, index) =>
+        index % step === 0
+    );
+}
 historyChart.data.labels = [];
 
 historyChart.data.datasets = [];
@@ -722,13 +734,17 @@ chartData.forEach(item => {
 
       label: item.device,
 
-      data: [],
+  data: [],
 
-      borderColor: color,
+  borderColor: color,
 
-      backgroundColor: color,
+  backgroundColor: color,
 
-      tension: 0.3
+  tension: 0.3,
+
+  fill: false,
+
+  pointRadius: 0
     };
   }
 
