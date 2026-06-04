@@ -219,8 +219,8 @@ const historyChart =
     x: {
 
       ticks: {
-
-            maxTicksLimit: 10
+          autoSkip: true,
+          maxTicksLimit: 15
             }
           }
         }
