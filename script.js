@@ -851,6 +851,35 @@ setInterval(
 
 updateClock();
 
+// =====================================================
+// EXPORT CSV
+// =====================================================
+
+async function exportHistoryExcel() {
+
+  const range =
+    document.getElementById(
+      "rangeSelect"
+    ).value;
+
+  const field =
+    document.getElementById(
+      "fieldSelect"
+    ).value;
+
+  const device =
+    document.getElementById(
+      "deviceSelect"
+    ).value;
+
+  const url =
+    `${API_URL}/export?range=${range}&field=${field}&device=${device}`;
+
+  window.open(
+    url,
+    "_blank"
+  );
+}
 
 // =====================================================
 // START
